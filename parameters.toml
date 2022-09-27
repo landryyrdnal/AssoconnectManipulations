@@ -1,0 +1,118 @@
+# LISTE DES COULEURS
+[couleurs]
+    blanc = "FFFFFF"
+    noir = "000000"
+    orange = "FF9900"
+    jaune = "FFFF00"
+    rose = "FF3399"
+    rougeClair = "FF0000"
+    rougeFonce = "C00000"
+    bleuCiel = "00B0F0"
+    bleuFonce = "0070C0"
+    mauve = "CC00FF"
+    gris = "666666"
+    grisClair = "d9d9d9"
+    bleuNoir = "002060"
+    vert = "92D050"
+    violet = "800080"
+
+# LISTE DES PROFESSEURS
+[profs]
+    [profs.adeline]
+        nom = "Adeline"
+        couleur = "blanc"
+        fond = "orange"
+        diminutif = "Ad"
+
+    [profs.agathe]
+        nom ="Agathe"
+        couleur = "noir"
+        fond = "jaune"
+        diminutif = "Ag"
+
+    [profs.angelique]
+        nom ="Angélique"
+        couleur = "blanc"
+        fond = "rose"
+        diminutif = "An"
+
+    [profs.elaura]
+        nom = "Elaura"
+        couleur = "noir"
+        fond = "blanc"
+        diminutif = "El"
+
+    [profs.louise]
+        nom = "Louise"
+        couleur = "blanc"
+        fond = "rougeClair"
+        diminutif = "Lo"
+
+     [profs.marie-line]
+        nom = "Marie-Line"
+        couleur = "blanc"
+        fond = "mauve"
+        diminutif = "ML"
+
+    [profs.maeliss]
+        nom = "Maëliss"
+        couleur = "noir"
+        fond = "bleuCiel"
+        diminutif = "Ma"
+
+    [profs.anne-charlotte]
+        nom = "Anne-Charlotte"
+        couleur = "blanc"
+        fond = "bleuFonce"
+        diminutif = "AC"
+
+    [profs.marie-danielle]
+        nom = "Marie-Danielle"
+        couleur = "blanc"
+        fond = "bleuNoir"
+        diminutif = "MD"
+
+    [profs.almendra]
+        nom = "Almendra"
+        couleur = "blanc"
+        fond = "rougeFonce"
+        diminutif = "Al"
+
+    [profs.sirarpik]
+        nom = "Sirarpik"
+        couleur = "blanc"
+        fond = "noir"
+        diminutif = "Si"
+
+    [profs.natacha]
+        nom = "Natacha"
+        couleur = "noir"
+        fond = "vert"
+        diminutif = "Na"
+
+    [profs.eleonora]
+        nom = "Eleonora"
+        couleur = "blanc"
+        fond = "violet"
+        diminutif = "Eleo"
+
+    [profs.valentine]
+        nom = "Valentine"
+        couleur = "noir"
+        fond = "jaune"
+        diminutif = "Va"
+
+    [profs.none]
+        nom = "None"
+        couleur = "rougeFonce"
+        fond = "rougeClair"
+        diminutif = "Prof Inconnu"
+
+[AssoConnect]
+    mail = "info@academie-ballet.fr"
+    password = "71!!!$l=442+84563!=269856!985btn4545+6656!!!5bA#c23=4456543s+A"
+    connection_page = "https://app.assoconnect.com/login"
+
+[AssoConnectFinancial]
+    mail = "mdgrimaud@orange.fr"
+    password = "AssoconnectMD2"
