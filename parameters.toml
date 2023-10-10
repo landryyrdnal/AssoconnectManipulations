@@ -2,19 +2,19 @@
 [couleurs]
     blanc = "FFFFFF"
     noir = "000000"
-    orange = "FF9900"
-    jaune = "FFFF00"
-    rose = "FF3399"
-    rougeClair = "FF0000"
-    rougeFonce = "C00000"
-    bleuCiel = "00B0F0"
-    bleuFonce = "0070C0"
-    mauve = "CC00FF"
-    gris = "666666"
-    grisClair = "d9d9d9"
-    bleuNoir = "002060"
-    vert = "92D050"
-    violet = "800080"
+    orange = "FF642e"
+    jaune = "FFCB00"
+    rose = "FAA1F1"
+    rougeClair = "EE0F14"
+    rougeFonce = "B00721"
+    bleuCiel = "66CCFF"
+    bleuFonce = "0086C0"
+    mauve = "BDa8F9"
+    gris = "808080"
+    grisClair = "C4C4C4"
+    bleuNoir = "225091"
+    vert = "9CD326"
+    violet = "784BD1"
 
 # LISTE DES PROFESSEURS
 [profs]
@@ -47,7 +47,7 @@
         couleur_sac = "Vert"
 
     [profs.elaura]
-        nom = "Elaura"
+        nom = "Élaura"
         couleur = "noir"
         fond = "blanc"
         diminutif = "El"
@@ -129,6 +129,28 @@
         fond = "bleuCiel"
         diminutif = "Ma"
         couleur_sac = "Bleu Ciel"
+
+    [profs.claire]
+        nom = "Claire"
+        couleur = "noir"
+        fond = "bleuCiel"
+        diminutif = "Cl"
+        couleur_sac = "Bleu Ciel"
+
+    [profs.jeanne]
+        nom = "Jeanne"
+        couleur = "blanc"
+        fond = "rougeClair"
+        diminutif = "Je"
+        couleur_sac = "Rouge"
+
+    [profs.lorena]
+        nom = "Loréna"
+        couleur = "blanc"
+        fond = "bleuCiel"
+        diminutif = "Lor"
+        couleur_sac = "bleuCiel"
+
 
 [AssoConnect]
     mail = "info@academie-ballet.fr"

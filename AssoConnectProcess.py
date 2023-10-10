@@ -13,7 +13,8 @@ import unidecode
 
 liste_profs = toml.load("parameters.toml")["profs"]
 liste_couleurs = toml.load("parameters.toml")["couleurs"]
-annee_scolaire = "22-23"
+annee_scolaire = "23-24"
+debug = True
 
 # base de donnée mise à jour
 #workbook = GetDatabase.get_assoconnect_data_base()
@@ -78,9 +79,7 @@ class CoursDanse():
                 return jour
 
     def def_niveau(self):
-        print(self.nom_cours)
-
-        result = self.nom_cours.split(self.prof["diminutif"])[1]
+        result = self.nom_cours.split(self.prof["nom"])[1]
         return result
 
     # retourne l'heure sous la forme 15h30
@@ -95,9 +94,14 @@ class CoursDanse():
     def def_prof(self):
         for prof in liste_profs:
             if re.search(liste_profs[prof]["nom"], self.nom_cours):
+                if debug:
+                    print("prof trouvé pour le cours {} :{}".format(self.nom_cours, liste_profs[prof]["nom"]))
                 return liste_profs[prof]
-            elif re.search(liste_profs[prof]["diminutif"], self.nom_cours):
-                return liste_profs[prof]
+            #elif re.search(liste_profs[prof]["diminutif"], self.nom_cours):
+            #    if debug:
+            #        print("prof trouvé :", liste_profs[prof]["nom"])
+            #    return liste_profs[prof]
+
 
 
 def chercher_cours(niveau):
@@ -123,7 +127,7 @@ def chercher_cours(niveau):
 # On recherche tous les niveaux de cours
 liste_niveaux = []
 for col in workbook:
-    if re.search("Cours", col) and re.search("saison {}".format(annee_scolaire), col):
+    if re.search("saison {}".format(annee_scolaire), col):
         if col == "Cours de danse choisi(s)" or col == "Cours d'essai":
             pass
         else:
@@ -182,10 +186,10 @@ for niveau in liste_niveaux:
                                  "Autres cours": autres_cours,
                                  "cours": cours}
                         # on ne prends en compte que les élèves vérifiés.
-                        if row["Inscription 2022-2023 vérifiée"] == "oui" and row["Saison 2022-2023"] == "Oui":
+                        if row["Inscription 23-24 VÉRIFIÉE"] == "oui" and row["Saison 2023-2024"] == "Oui":
                             liste_eleves.append(eleve)
                         else:
-                            print(f"{eleve['Nom']} {eleve['Prénom']} a son inscription 2022/23 non vérifiée.")
+                            print(f"{eleve['Nom']} {eleve['Prénom']} a son inscription 2023/24 non vérifiée.")
         # on trie la liste des élèves par prénoms
         liste_eleves.sort(key=lambda x: unidecode.unidecode(x["Prénom"]))
         # on ajoute la liste des élèves à l'instance de la classe CoursDanse
