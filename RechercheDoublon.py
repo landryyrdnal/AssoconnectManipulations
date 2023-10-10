@@ -53,8 +53,8 @@ class Eleve:
 
 
 # RÉCUPÉRATION DE LA BASE DE DONNÉE SUR ASSOCONNECT
-workbook = get_assoconnect_data_base()
-#workbook = pd.read_excel("export.xlsx")
+#workbook = get_assoconnect_data_base()
+workbook = pd.read_excel("export.xlsx")
 # liste des informations à garder comme étant relevantes et pertinentes pour définir le compte principal
 tokens = ["ID du Contact", "Nom", "Prénom", "Statut adhérent", "Statut donateur", "Email", "Date de naissance",
           "Téléphone fixe", "Téléphone mobile", "Sexe", "Adresse", "Code postal", "Ville",
@@ -93,10 +93,17 @@ for i in seen_twice:
 print(f"Il y a {len(seen_twice)} doublons trouvés dans AssoConnect")
 
 
+def unlock_pass(password: str) -> str:
+    charac = "2345689!=%°+"
+    password = password[::-1]
+    for c in charac:
+        password = password.replace(c, "")
+    return password
+
 # connection à AssoConnect
 params = toml.load("./parameters.toml")
-password = params["AssoConnectFinancial"]["password"]
-mail = params["AssoConnectFinancial"]["mail"]
+password = unlock_pass(params["AssoConnect"]["password"])
+mail = params["AssoConnect"]["mail"]
 url = params["AssoConnect"]["connection_page"]
 current_dir = os.getcwd()
 
@@ -134,7 +141,7 @@ for i in seen_twice:
         premier = i[1]
         second = i[0]
     # sélection du champ 1
-    driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/section/div/div[4]/div/form[1]/div[2]/div[1]/div/div[2]/input").send_keys(str(premier.id))
+    driver.find_element(By.XPATH, '//*[@id="BuyPackerUser1IdHelper"]').send_keys(str(premier.id))
     sleep(2)
     for i in range (1, 200):
         try:
@@ -144,7 +151,7 @@ for i in seen_twice:
                 pass
         except selenium.common.exceptions.NoSuchElementException:
             pass
-    driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/section/div/div[4]/div/form[1]/div[2]/div[2]/div/div[2]/input").send_keys(str(second.id))
+    driver.find_element(By.XPATH, '//*[@id="BuyPackerUser2IdHelper"]').send_keys(str(second.id))
     sleep(2)
     for i in range (1, 200):
         try:

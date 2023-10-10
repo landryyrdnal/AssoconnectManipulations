@@ -49,30 +49,30 @@ def get_assoconnect_data_base()-> pd.DataFrame:
     print("connection OK")
 
     # cliquer sur administration
-    driver.find_element(By.XPATH, """/html/body/div[1]/div[3]/div[2]/a/div/span""").click()
+    driver.find_element(By.XPATH, """//*[@id="templateNavAdminBarActionsButton"]/span""").click()
     print("entrée sur la page ADMINISTRATION OK")
 
     # cliquer sur communauté
 
     try:
-        driver.find_element(By.XPATH, """/html/body/div/div[3]/section/div/div[3]/div/div[4]/div[5]/a/div""").click()
+        driver.get("https://academie-de-ballet-nini-theilade.assoconnect.com/organization/contacts/272677")
     except selenium.common.exceptions.WebDriverException:
         sleep(4)
     print("entrée sur la page CONTACTS OK")
 
     # cliquer sur le boutton checker
     sleep(1)
-    driver.find_element(By.XPATH,"""/html/body/div[1]/div[3]/section/div/div[4]/div/div[7]/div[4]/div/div[1]/div/div[2]/label/span[1]/span[2]""").click()
+    driver.find_element(By.XPATH,"""//*[@id="searchTable"]/div[1]/div/div[2]/label/span[1]/span[2]""").click()
     print("checker tous les éléments OK")
 
     # tout sélectionner
-    sleep(3)
-    driver.find_element(By.XPATH,"""/html/body/div[1]/div[3]/section/div/div[4]/div/div[7]/span/div/u""").click()
+    sleep(5)
+    driver.find_element(By.XPATH,"""/html/body/div[15]/div/ul/ul/li[1]/div/span""").click()
     print("Sélection de tous les éléments OK")
 
     # enregistrer sous XLSX
-    driver.find_element(By.XPATH, """/html/body/div[1]/div[3]/section/div/div[4]/div/div[7]/div[2]""").click()
-    driver.find_element(By.XPATH, """/html/body/div[13]/div/ul/ul/li[1]/div/span""").click()
+    driver.find_element(By.XPATH, """//*[@id="searchTableExportButton"]/span""").click()
+    driver.find_element(By.XPATH, """//*[@id="searchTableExportDropdownMenu0Item"]/div/span""").click()
     print("Choix de l'export OK")
     sleep(3)
     # on supprime l'ancienne base de donnée .xlsx si elle existe

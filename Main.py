@@ -2,6 +2,7 @@ import AssoConnectProcess
 
 
 
-AssoConnectProcess.contsruction_tableau_appel()
-a = input("Appuyez sur une touche pour quitter.")
+#AssoConnectProcess.contsruction_tableau_appel()
+AssoConnectProcess.construction_tableau_etiquettes()
+
 

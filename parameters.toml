@@ -23,90 +23,112 @@
         couleur = "blanc"
         fond = "orange"
         diminutif = "Ad"
+        couleur_sac = "Orange"
 
     [profs.agathe]
         nom ="Agathe"
         couleur = "noir"
         fond = "jaune"
         diminutif = "Ag"
+        couleur_sac = ""
 
     [profs.angelique]
         nom ="Angélique"
         couleur = "blanc"
         fond = "rose"
         diminutif = "An"
+        couleur_sac = "Rose"
+
+    [profs.eleonora]
+        nom = "Eleonora"
+        couleur = "noir"
+        fond = "vert"
+        diminutif = "Eleo"
+        couleur_sac = "Vert"
 
     [profs.elaura]
         nom = "Elaura"
         couleur = "noir"
         fond = "blanc"
         diminutif = "El"
+        couleur_sac = "Blanc"
 
     [profs.louise]
         nom = "Louise"
         couleur = "blanc"
         fond = "rougeClair"
         diminutif = "Lo"
+        couleur_sac = "Rouge"
 
      [profs.marie-line]
         nom = "Marie-Line"
         couleur = "blanc"
         fond = "mauve"
         diminutif = "ML"
-
-    [profs.maeliss]
-        nom = "Maëliss"
-        couleur = "noir"
-        fond = "bleuCiel"
-        diminutif = "Ma"
+        couleur_sac = "Violet"
 
     [profs.anne-charlotte]
         nom = "Anne-Charlotte"
         couleur = "blanc"
         fond = "bleuFonce"
         diminutif = "AC"
+        couleur_sac = "Bleu Foncé"
 
     [profs.marie-danielle]
         nom = "Marie-Danielle"
         couleur = "blanc"
         fond = "bleuNoir"
         diminutif = "MD"
+        couleur_sac = "Noir"
 
     [profs.almendra]
         nom = "Almendra"
         couleur = "blanc"
         fond = "rougeFonce"
         diminutif = "Al"
+        couleur_sac = "Rouge"
 
     [profs.sirarpik]
         nom = "Sirarpik"
         couleur = "blanc"
         fond = "noir"
         diminutif = "Si"
+        couleur_sac = "Gris"
 
     [profs.natacha]
         nom = "Natacha"
         couleur = "noir"
         fond = "vert"
         diminutif = "Na"
-
-    [profs.eleonora]
-        nom = "Eleonora"
-        couleur = "blanc"
-        fond = "violet"
-        diminutif = "Eleo"
+        couleur_sac = ""
 
     [profs.valentine]
         nom = "Valentine"
         couleur = "noir"
         fond = "jaune"
         diminutif = "Va"
+        couleur_sac = "Jaune"
 
     [profs.none]
         nom = "None"
         couleur = "rougeFonce"
         fond = "rougeClair"
         diminutif = "Prof Inconnu"
+        couleur_sac = ""
+
+    [profs.uma]
+        nom = "Uma"
+        couleur = "blanc"
+        fond = "rougeFonce"
+        diminutif = "Um"
+        couleur_sac = "Rouge"
+
+    [profs.maeliss]
+        nom = "Maëliss"
+        couleur = "noir"
+        fond = "bleuCiel"
+        diminutif = "Ma"
+        couleur_sac = "Bleu Ciel"
 
 [AssoConnect]
     mail = "info@academie-ballet.fr"

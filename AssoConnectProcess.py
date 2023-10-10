@@ -1,21 +1,24 @@
-import pandas as pd
-import re as re
 import datetime
-from openpyxl import *
-from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import *
-from openpyxl.worksheet import page
-from GetDatabase import get_assoconnect_data_base
 import math
+import re as re
+import pandas as pd
 import toml
+from openpyxl import *
+from openpyxl.styles import *
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.worksheet import page
+from openpyxl.worksheet.pagebreak import Break, RowBreak
+import GetDatabase
+import unidecode
 
 liste_profs = toml.load("parameters.toml")["profs"]
 liste_couleurs = toml.load("parameters.toml")["couleurs"]
 annee_scolaire = "22-23"
 
-#workbook = get_assoconnect_data_base()
+# base de donnée mise à jour
+#workbook = GetDatabase.get_assoconnect_data_base()
 
-
+# base de donnée non à jour
 workbook = pd.read_excel("export.xlsx")
 
 
@@ -43,7 +46,6 @@ class NiveauDanse():
             return "Eveil/Initiation"
         elif re.search("Initiation", self.nom_niveau):
             return "Eveil/Initiation"
-        # todo: vérifier que baroque et barre au sol apparaissent tel quel dans les bases de données adulte…
         elif re.search("Baroque", self.nom_niveau):
             return "Baroque"
         elif re.search("Barre au Sol", self.nom_niveau):
@@ -63,6 +65,8 @@ class CoursDanse():
         self.nb_eleves = 0
         self.df = {}
         self.discipline = discipline
+        # Cette fonction est à retravailler ne fonctionne pas en l'état
+        self.niveau = self.def_niveau()
 
     def __repr__(self):
         return str(self.jour) + str(self.heure) + str(self.prof)
@@ -72,6 +76,12 @@ class CoursDanse():
         for jour in jours:
             if re.search(jour, self.nom_cours):
                 return jour
+
+    def def_niveau(self):
+        print(self.nom_cours)
+
+        result = self.nom_cours.split(self.prof["diminutif"])[1]
+        return result
 
     # retourne l'heure sous la forme 15h30
     def def_heure(self):
@@ -169,14 +179,15 @@ for niveau in liste_niveaux:
                                  "Genre": row["Sexe"],
                                  "Téléphone": telephone,
                                  "Mail": row["Email"],
-                                 "Autres cours": autres_cours}
+                                 "Autres cours": autres_cours,
+                                 "cours": cours}
                         # on ne prends en compte que les élèves vérifiés.
-                        if row["Inscription 2022-2023 vérifiée"] == "oui":
+                        if row["Inscription 2022-2023 vérifiée"] == "oui" and row["Saison 2022-2023"] == "Oui":
                             liste_eleves.append(eleve)
                         else:
                             print(f"{eleve['Nom']} {eleve['Prénom']} a son inscription 2022/23 non vérifiée.")
         # on trie la liste des élèves par prénoms
-        liste_eleves.sort(key=lambda x: x["Prénom"])
+        liste_eleves.sort(key=lambda x: unidecode.unidecode(x["Prénom"]))
         # on ajoute la liste des élèves à l'instance de la classe CoursDanse
         cours.liste_eleves = liste_eleves
         # on ajoute le nb d'élèves à l'instance de la classe CoursDanse
@@ -332,8 +343,8 @@ def construction_tableau_etiquettes():
         for index, ligne in cours.df.iterrows():
             eleve = {}
             eleve["Cours"] = cours.discipline[:4] + " " + cours.jour[:2] + \
-                             " " + cours.heure + " " + liste_profs[cours.prof][2]
-            eleve["Couleur"] = liste_profs[cours.prof][3]
+                             " " + cours.heure + " " + cours.prof["diminutif"]
+            eleve["Couleur"] = cours.prof["couleur_sac"]
             eleve["Nom"] = ligne["Nom"]
             eleve["Prénom"] = ligne["Prénom"]
             eleve["Âge"] = ligne["Âge"]
@@ -341,7 +352,7 @@ def construction_tableau_etiquettes():
             # on renomme les autres cours : Co Ve 17h30 Nat
 
             for i in eleve["Autres cours"]:
-                if i == "" or math.isnan(i) or i == "nan":
+                if i == "" or i == "nan":#or math.isnan(i)
                     eleve["Autres cours"].remove(i)
                 for niveau in liste_niveaux:
                     for coursname in niveau.liste_cours:
@@ -349,7 +360,7 @@ def construction_tableau_etiquettes():
                             eleve["Autres cours"][eleve["Autres cours"].index(i)] = coursname.discipline[
                                                                                     :4] + " " + coursname.jour[:2] + \
                                                                                     " " + coursname.heure + " " + \
-                                                                                    liste_profs[coursname.prof][2]
+                                                                                    coursname.prof["diminutif"]
             # On enlève les cours dans Autres cours qui sont en double
             autres_cours_sans_doublon = []
             for _autre_cours in eleve["Autres cours"]:
@@ -363,7 +374,7 @@ def construction_tableau_etiquettes():
 
     def index_eleves(liste_eleve_cours):
         # on ajoute l'index de chaque élève
-        liste_eleve_cours.sort(key=lambda x: x["Prénom"])
+        liste_eleve_cours.sort(key=lambda x: unidecode.unidecode(x["Prénom"]))
         for i in liste_eleve_cours:
             i["Index"] = liste_eleve_cours.index(i) + 1
         # on retourne la liste
@@ -376,7 +387,7 @@ def construction_tableau_etiquettes():
     for niveau in liste_niveaux:
         for cours in niveau.liste_cours:
             # on fabrique un identifiant pour le cours pour trouver les doublons
-            code = cours.discipline + cours.prof + cours.jour + cours.heure
+            code = cours.discipline + cours.prof["diminutif"] + cours.jour + cours.heure
             if code not in liste_index:
                 liste_index.append(code)
                 # on génère la liste des élèves dans le cours (un élève: dictionnaire)
@@ -429,7 +440,8 @@ def construction_tableau_etiquettes():
     # index
     style_index = NamedStyle(name="style_index")
     style_index.font = Font(name="Arial", size=14, bold=True)
-    style_index.alignment = Alignment(horizontal="left", vertical="center")
+    style_index.alignment = Alignment(horizontal="right", vertical="center", text_rotation=180)
+
     # autres cours
     style_autres_cours = NamedStyle(name="style_autres_cours")
     style_autres_cours.font = Font(name="Arial", size=12)
@@ -521,12 +533,17 @@ def construction_tableau_etiquettes():
                     ws.merge_cells(start_row=int(ws.max_row), end_row=int(ws.max_row),
                                    start_column=5, end_column=8)
                     # Index / age
-                    ws.append(["  " + str(eleve["Index"]), " ", str(eleve["Âge"]) + " ans", " ",
-                               "  " + str(eleve2["Index"]), " ", str(eleve2["Âge"]) + " ans"])
-                    ws[ws.max_row][0].style, ws[ws.max_row][4].style = style_index, style_index
-                    ws[ws.max_row][2].style, ws[ws.max_row][6].style = style_age, style_age
+                    ws.append(["  " + " ", str(eleve["Âge"]) + " ans", " ", str(eleve["Index"]),
+                               "  " + " ", str(eleve2["Âge"]) + " ans", " ", str(eleve2["Index"])])
+                    # on redimensionne la hauteur de ligne
+                    rd = ws.row_dimensions[ws.max_row]
+                    rd.height = 23
+                    ws[ws.max_row][3].style, ws[ws.max_row][7].style = style_index, style_index
+                    ws[ws.max_row][1].style, ws[ws.max_row][5].style = style_age, style_age
+                    #todo: définir des plages d'impression et élargir les bordures
+
                     # Autres cours
-                    # premier rang
+                    # premier rang autres cours
                     impr = []
                     espace = " "
                     if len(eleve["Autres cours"]) == 0:
@@ -581,7 +598,7 @@ def construction_tableau_etiquettes():
                     ws[ws.max_row][0].style, ws[ws.max_row][2].style = style_autres_cours, style_autres_cours
                     ws[ws.max_row][4].style, ws[ws.max_row][6].style = style_autres_cours, style_autres_cours
 
-                    # deuxième rang
+                    # deuxième rang autres cours
                     impr = []
                     if len(eleve["Autres cours"]) == 3:
                         impr.append(eleve["Autres cours"][2])
@@ -688,12 +705,18 @@ def construction_tableau_etiquettes():
         ws.column_dimensions["G"].width = 11.90
         ws.column_dimensions["H"].width = 11.90
 
+        # définition des sauts de page
+        max_row = ws.max_row
+        break_number = 0
+        row_break = RowBreak()
+        while break_number <= max_row:
+            break_number += 42
+            row_break.append(Break(id=break_number))
+        ws.row_breaks = row_break
+
         # définition de la zone d'impression et des marges
         ws.page_margins = page.PageMargins(left=0.23, right=0.23, top=0.23, bottom=0.23, header=0.23, footer=0.23)
         wb.page_margins = page.PageMargins(left=0.23, right=0.23, top=0.23, bottom=0.23, header=0.23, footer=0.23)
         print("Impression de la page {} terminée".format(str(messages.index(message) + 1)))
     # sauvegarde du fichier
     wb.save("Étiquettes.xlsx")
-
-
-
