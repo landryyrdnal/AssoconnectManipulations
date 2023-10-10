@@ -18,6 +18,13 @@
 
 # LISTE DES PROFESSEURS
 [profs]
+     [profs.lorena]
+        nom = "Loréna"
+        couleur = "blanc"
+        fond = "bleuCiel"
+        diminutif = "Lor"
+        couleur_sac = "bleuCiel"
+
     [profs.adeline]
         nom = "Adeline"
         couleur = "blanc"
@@ -31,13 +38,6 @@
         fond = "jaune"
         diminutif = "Ag"
         couleur_sac = ""
-
-    [profs.angelique]
-        nom ="Angélique"
-        couleur = "blanc"
-        fond = "rose"
-        diminutif = "An"
-        couleur_sac = "Rose"
 
     [profs.eleonora]
         nom = "Eleonora"
@@ -73,6 +73,13 @@
         fond = "bleuFonce"
         diminutif = "AC"
         couleur_sac = "Bleu Foncé"
+
+    [profs.angelique]
+        nom ="Angélique"
+        couleur = "blanc"
+        fond = "rose"
+        diminutif = "An"
+        couleur_sac = "Rose"
 
     [profs.marie-danielle]
         nom = "Marie-Danielle"
@@ -144,12 +151,7 @@
         diminutif = "Je"
         couleur_sac = "Rouge"
 
-    [profs.lorena]
-        nom = "Loréna"
-        couleur = "blanc"
-        fond = "bleuCiel"
-        diminutif = "Lor"
-        couleur_sac = "bleuCiel"
+
 
 
 [AssoConnect]

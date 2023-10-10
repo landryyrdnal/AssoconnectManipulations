@@ -8,7 +8,7 @@ from openpyxl.styles import *
 
 var_semaine = AssoConnectProcess.var_semaine
 liste_profs = toml.load("parameters.toml")["profs"]
-db = openpyxl.load_workbook("Gala 2022 ordre des cours.xlsx")
+db = openpyxl.load_workbook("Gala 2024 ordre des cours.xlsx")
 sheet = db.active
 
 
@@ -52,6 +52,7 @@ for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=
 
 # cherche dans la liste des cours avec durée le cours correspondant
 def find_the_good_class_time(jour, heure, prof):
+    print(jour, heure, prof["nom"])
     for course in liste_cours_horaires:
         if course.heure == heure and course.jour == jour and course.prof == prof["nom"]:
             return course
@@ -92,6 +93,7 @@ for level in var_semaine:
                 students_with_multiple_courses.append(student)
 
 student_list = []
+
 for student in students_with_multiple_courses:
     G1_courses = []
     G2_courses = []
@@ -202,6 +204,7 @@ for student in student_dancing_at_least_twice_in_a_G:
 
 for i in student_dancing_at_least_twice_in_a_G:
     print(i)
+
 # CRÉATION DU TABLEAU
 
 # Génération du tableau
@@ -255,4 +258,4 @@ for G in ["G1", "G2", "G3"]:
     ws.column_dimensions["G"].width = 31
 
 wb.save("Tableau Changement de costumes.xlsx")
-
+print("Tableau des changements de costume enregistré")
