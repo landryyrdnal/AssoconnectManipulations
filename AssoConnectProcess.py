@@ -120,7 +120,12 @@ def chercher_cours(niveau):
         liste_cours.append(CoursDanse(i, discipline))
     return liste_cours
 
+
 def fill_planning():
+    """
+    Fonction qui liste tous les cours et les peuples avec les élèves.
+    :return: retourne la variable var_semaine qui contient tous les cours avec tous les élèves dedans
+    """
     # DÉBUT DU PROCESS
 
 
