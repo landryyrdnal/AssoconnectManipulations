@@ -1,6 +1,6 @@
 import AssoConnectProcess
 # ce script sert à lister les cours
-planning_semaine = AssoConnectProcess.var_semaine
+planning_semaine = AssoConnectProcess.fill_planning()
 
 print(type(planning_semaine))
 print(planning_semaine)
