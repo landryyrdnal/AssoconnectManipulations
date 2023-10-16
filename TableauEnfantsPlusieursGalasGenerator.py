@@ -1,18 +1,16 @@
-import openpyxl
-import unidecode
-
 import AssoConnectProcess
 import toml
 import re
 import datetime
 import openpyxl
-from openpyxl.styles import *
 import unidecode
+from openpyxl.styles import *
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 
-var_semaine = AssoConnectProcess.var_semaine
+var_semaine = AssoConnectProcess.fill_planning()
 liste_profs = toml.load("parameters.toml")["profs"]
-db = openpyxl.load_workbook("Gala 2022 ordre des cours.xlsx")
+db = openpyxl.load_workbook("Gala 2024 ordre des cours.xlsx")
 sheet = db.active
 
 
@@ -56,6 +54,7 @@ for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=
 
 # cherche dans la liste des cours avec durée le cours correspondant
 def find_the_good_class_time(jour, heure, prof):
+    print(jour, heure, prof)
     for course in liste_cours_horaires:
         if course.heure == heure and course.jour == jour and course.prof == prof["nom"]:
             return course
@@ -129,12 +128,19 @@ for student in students:
 print(student_list)
 print(len(student_list))
 student_list.sort(key=lambda x:  unidecode.unidecode(x["nom"]) and unidecode.unidecode(x["prénom"]))
+st_titres = NamedStyle(name="style_titre")
+st_titres.font = Font(name="Arial", size=14, bold=True)
+st_titres.alignment = Alignment(horizontal="center", vertical="center")
+st_titres_icon = NamedStyle(name="style_titre_icon")
+st_titres_icon.font = Font(name="Arial", size=16, bold=False)
+st_titres_icon.alignment = Alignment(horizontal="center", vertical="center")
 
 # ce code n'est utile qu'en exploitant la sortie dans la console
-for G in ["❶❷", "❷❸", "❶❸"]:
-    ws = wb.create_sheet(G)
+for G in ["❶❷", "❷❸", "❶❸","❶❷❸"]:
+    ws = db.create_sheet(G)
     ws.title = G
-    ws.append([G, "", "Samedi 11 mars","","", "dimanche 12 mars"])
+    
+    ws.append([G, "", "Samedi 16 mars","","", "dimanche 17 mars"])
     ws[ws.max_row][0].style, ws[ws.max_row][1].style, ws[ws.max_row][2].style, ws[ws.max_row][3].style, ws[ws.max_row][4].style, ws[ws.max_row][5].style = st_titres, st_titres, st_titres, st_titres, st_titres, st_titres
     ws.append(["Prénom", "Nom", "Entrée", "Sortie", "Gala précédent", "Entrée", "Téléphone", "Cours"])
     ws[ws.max_row][0].style, ws[ws.max_row][1].style, ws[ws.max_row][2].style, ws[ws.max_row][3].style, ws[ws.max_row][4].style, ws[ws.max_row][5].style, ws[ws.max_row][6].style, ws[ws.max_row][7].style = st_titres, st_titres, st_titres, st_titres, st_titres, st_titres, st_titres, st_titres
@@ -143,16 +149,22 @@ for G in ["❶❷", "❷❸", "❶❸"]:
         for student in student_list:
             if len(student["G1"]) >= 1 and len(student["G2"]) >= 1:
                 print(student["prénom"] +","+student["nom"]+","+str(student["G1"])+","+str(student["G2"]))
-
+                ws.append([student["prénom"], student["nom"], "", "", "❶", "", student["téléphone"]])
     if G == "❷❸":
         for student in student_list:
             if len(student["G2"]) >= 1 and len(student["G3"]) >= 1:
                 print(student["prénom"] +","+student["nom"]+","+str(student["G2"])+","+str(student["G3"]))
+                ws.append([student["prénom"], student["nom"], "", "", "❷", "", student["téléphone"]])
     if G == "❶❸":
         for student in student_list:
             if len(student["G1"]) >= 1 and len(student["G3"]) >= 1:
                 print(student["prénom"] +","+student["nom"]+","+str(student["G1"])+","+str(student["G3"]))
+                ws.append([student["prénom"], student["nom"], "", "", "❶", "", student["téléphone"]])
+    if G == "❶❷❸":
+        for student in student_list:
+            if len(student["G1"]) >= 1 and len(student["G2"]) >= 1 and len(student["G3"]) >= 1:
+                print(student["prénom"] +","+student["nom"]+","+str(student["G1"])+","+str(student["G3"]))
+                ws.append([student["prénom"], student["nom"], "", "", "❶", "", student["téléphone"]])
 
-
-wb.save("Tableau Enfants à cocher Gala.xlsx")
+db.save("Tableau Enfants à cocher Gala.xlsx")
 

@@ -6,7 +6,7 @@ import datetime
 import openpyxl
 from openpyxl.styles import *
 
-var_semaine = AssoConnectProcess.var_semaine
+var_semaine = AssoConnectProcess.fill_planning()
 liste_profs = toml.load("parameters.toml")["profs"]
 db = openpyxl.load_workbook("Gala 2024 ordre des cours.xlsx")
 sheet = db.active
@@ -73,8 +73,8 @@ def search_prof(string):
     for prof in liste_profs:
         if re.search(liste_profs[prof]["nom"], string):
             return liste_profs[prof]
-        elif re.search(liste_profs[prof]["diminutif"], string):
-            return liste_profs[prof]
+        #elif re.search(liste_profs[prof]["diminutif"], string):
+        #    return liste_profs[prof]
 
 
 def search_jour(string):

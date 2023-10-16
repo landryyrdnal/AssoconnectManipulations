@@ -3,7 +3,7 @@ import graphviz
 import itertools
 
 
-planning_semaine = AssoConnectProcess.var_semaine
+planning_semaine = AssoConnectProcess.fill_planning()
 
 
 

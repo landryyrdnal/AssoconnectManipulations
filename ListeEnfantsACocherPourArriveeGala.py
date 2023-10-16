@@ -10,9 +10,9 @@ from openpyxl.styles import *
 import unidecode
 
 
-var_semaine = AssoConnectProcess.var_semaine
+var_semaine = AssoConnectProcess.fill_planning()
 liste_profs = toml.load("parameters.toml")["profs"]
-db = openpyxl.load_workbook("Gala 2022 ordre des cours.xlsx")
+db = openpyxl.load_workbook("Gala 2024 ordre des cours.xlsx")
 sheet = db.active
 
 
@@ -76,8 +76,7 @@ def search_prof(string):
     for prof in liste_profs:
         if re.search(liste_profs[prof]["nom"], string):
             return liste_profs[prof]
-        elif re.search(liste_profs[prof]["diminutif"], string):
-            return liste_profs[prof]
+
 
 
 def search_jour(string):
@@ -167,36 +166,54 @@ for G in ["❶", "❷", "❸"]:
     ws[ws.max_row][0].style, ws[ws.max_row][1].style, ws[ws.max_row][2].style, ws[ws.max_row][3].style, ws[ws.max_row][4].style, ws[ws.max_row][5].style, ws[ws.max_row][6].style, ws[ws.max_row][7].style = st_titres, st_titres, st_titres, st_titres, st_titres, st_titres, st_titres, st_titres
 
     if G == "❶":
+        already_in_list = []
         for student in student_list:
             if len(student["G1"]) >= 1:
                 cours = ""
                 for i in student["G1"]:
                     cours += str(i)
-                ws.append([student["prénom"], student["nom"], "", "", "", "", student["téléphone"], cours])
+                    cours += ","
+                cours = cours[:-1]
+                # Condition pour éviter d’avoir un doublon
+                if student["prénom"]+student["nom"] not in already_in_list:
+                    #Ajout de la ligne de l’élève dans le tableau du gala 1
+                    ws.append([student["prénom"], student["nom"].replace(" ","_"), "", "", "", "", student["téléphone"], cours])
+                    already_in_list.append(student["prénom"]+student["nom"])
     if G == "❷":
+        already_in_list = []
         for student in student_list:
             if len(student["G2"]) >= 1:
                 cours = ""
                 for i in student["G2"]:
                     cours += str(i)
+                    cours += ","
+                cours = cours[:-1]
                 gala = ""
-                if len(student["G1"]) >= 1:
-                    gala = "❶"
-                ws.append([student["prénom"], student["nom"], "", "", gala, "", student["téléphone"], cours])
-                if len(student["G1"]) >= 1:
-                    ws[ws.max_row][4].style = g1
+                # Condition pour éviter d’avoir un doublon
+                if student["prénom"] + student["nom"] not in already_in_list:
+                    if len(student["G1"]) >= 1:
+                        gala = "❶"
+                    ws.append([student["prénom"], student["nom"].replace(" ","_"), "", "", gala, "", student["téléphone"], cours])
+                    already_in_list.append(student["prénom"] + student["nom"])
+                    if len(student["G1"]) >= 1:
+                        ws[ws.max_row][4].style = g1
     if G == "❸":
+        already_in_list = []
         for student in student_list:
             if len(student["G3"]) >= 1:
                 cours = ""
                 for i in student["G3"]:
                     cours += str(i)
+                    cours += ","
+                cours = cours[:-1]
                 gala = ""
                 if len(student["G2"]) >= 1:
                     gala = "❷"
-                ws.append([student["prénom"], student["nom"], "", "", gala, "", student["téléphone"], cours])
-                if len(student["G2"]) >= 1:
-                    ws[ws.max_row][4].style = g2
+                if student["prénom"] + student["nom"] not in already_in_list:
+                    ws.append([student["prénom"], student["nom"].replace(" ","_"), "", "", gala, "", student["téléphone"], cours])
+                    already_in_list.append(student["prénom"] + student["nom"])
+                    if len(student["G2"]) >= 1:
+                        ws[ws.max_row][4].style = g2
 
     # largeur de colonnes
     ws.column_dimensions["A"].width = 25
