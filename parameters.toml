@@ -152,7 +152,11 @@
         couleur_sac = "Rouge"
 
 
-
+[DataBase]
+    annee_scolaire = "23-24"
+    col_verif = "Inscription 23-24 VÉRIFIÉE"
+    col_saison = "Saison 2023-2024"
+    database_file = "export.xlsx"
 
 [AssoConnect]
     mail = "info@academie-ballet.fr"

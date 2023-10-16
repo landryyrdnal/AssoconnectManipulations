@@ -1,24 +1,25 @@
 import datetime
-import math
 import re as re
 import pandas as pd
 import toml
 from openpyxl import *
-from openpyxl.styles import *
-from openpyxl.utils.dataframe import dataframe_to_rows
-
 import unidecode
 
-liste_profs = toml.load("parameters.toml")["profs"]
-liste_couleurs = toml.load("parameters.toml")["couleurs"]
-annee_scolaire = "23-24"
+
+parameters = "parameters.toml"
+liste_profs = toml.load(parameters)["profs"]
+liste_couleurs = toml.load(parameters)["couleurs"]
+annee_scolaire = toml.load(parameters)["DataBase"]["annee_scolaire"]
+
+# Si vrai sert à afficher les messsages dans la console
 debug = False
 
-# base de donnée mise à jour
-#workbook = GetDatabase.get_assoconnect_data_base()
+# Définition de la base de donnée à utiliser
+workbook = pd.read_excel(toml.load(parameters)["DataBase"]["database_file"])
 
-# base de donnée non à jour
-workbook = pd.read_excel("export.xlsx")
+# Colonnes de la base de donnée spécifiques à la saison
+col_verif = toml.load(parameters)["DataBase"]["col_verif"]  # nom de la colonne qui atteste de la vérification des inscriptions
+col_saison = toml.load(parameters)["DataBase"]["col_saison"]  # nom de la colonne qui indique dans la base de donnée la saison
 
 
 class NiveauDanse():
@@ -70,7 +71,7 @@ class CoursDanse():
         self.niveau = self.def_niveau()
 
     def __repr__(self):
-        return str(self.jour) + str(self.heure) + str(self.prof)
+        return str(self.jour) + "_" + str(self.heure) + "_" + str(self.prof["nom"] + "_" + str(self.nb_eleves))
 
     def def_jour(self):
         jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
@@ -97,11 +98,10 @@ class CoursDanse():
                 if debug:
                     print("prof trouvé pour le cours {} :{}".format(self.nom_cours, liste_profs[prof]["nom"]))
                 return liste_profs[prof]
-            #elif re.search(liste_profs[prof]["diminutif"], self.nom_cours):
+            # elif re.search(liste_profs[prof]["diminutif"], self.nom_cours):
             #    if debug:
             #        print("prof trouvé :", liste_profs[prof]["nom"])
             #    return liste_profs[prof]
-
 
 
 def chercher_cours(niveau):
@@ -121,39 +121,48 @@ def chercher_cours(niveau):
     return liste_cours
 
 
+def add_value(list, key, eleve):
+    list.append(eleve.get(key))
+
+
 def fill_planning():
     """
     Fonction qui liste tous les cours et les peuples avec les élèves.
-    :return: retourne la variable var_semaine qui contient tous les cours avec tous les élèves dedans
+    :return: Retourne la variable var_semaine qui contient tous les cours avec
+    pour chacun les précisions sur le prof et la liste des élèves
+    :type: liste des jours [lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche]
+    qui contiennent chacun une sous liste [tous les cours du jour] chaque cours est du type CoursDanse
     """
     # DÉBUT DU PROCESS
 
-
+    if debug:
+        print("début du process")
     # On recherche tous les niveaux de cours
     liste_niveaux = []
     for col in workbook:
-        if re.search("saison {}".format(annee_scolaire), col):
+        if re.search(f"saison {annee_scolaire}", col):
             if col == "Cours de danse choisi(s)" or col == "Cours d'essai":
                 pass
             else:
                 liste_niveaux.append(NiveauDanse(nom_niveau=col))
 
-    # on génère la liste de cours pour chaque niveau de cours (niveau étant élément de liste_niveau de class NiveauDanse)
+    # On génère la liste de cours pour chaque niveau de cours
+    # (niveau étant élément de liste_niveau de class NiveauDanse)
     for niveau in liste_niveaux:
         niveau.liste_cours = chercher_cours(niveau)
 
-    # pour chaque cours on recherche les élèves
+    # Pour chaque cours, on recherche les élèves qui sont dedans
     for niveau in liste_niveaux:
         for cours in niveau.liste_cours:
             liste_eleves = []
-            # on recherche dans toutes les cases non vides du tableau les cours
+            # On recherche dans toutes les cases non vides du tableau les cours qui existent
             for index, row in workbook.iterrows():
                 case = workbook[niveau.nom_niveau][index]
                 if case != 0 and case != "":
-                    # si la case correspond au cours
+                    # Si la case correspond au cours
                     for i in str(case).split("|"):
                         if i == cours.nom_cours:
-                            # on recherche tous les cours que fait l'élève en dehors du cours en cours
+                            # On recherche tous les autres cours que fait l'élève en dehors du cours en cours
                             list_autres_cours = []
                             for niv in liste_niveaux:
                                 if row[niv.nom_niveau] != 0:
@@ -177,7 +186,8 @@ def fill_planning():
                             # telephone
                             telephone = str(row["Téléphone mobile"])
                             if len(telephone) >= 10:
-                                telephone = "0" + telephone[2] + " " + telephone[3] + telephone[4] + " " + telephone[5] + \
+                                telephone = "0" + telephone[2] + " " + telephone[3] + telephone[4] + " " + telephone[
+                                    5] + \
                                             telephone[6] + " " + telephone[7] + telephone[8] + " " + telephone[9] + \
                                             telephone[10]
 
@@ -191,21 +201,17 @@ def fill_planning():
                                      "Autres cours": autres_cours,
                                      "cours": cours}
                             # on ne prends en compte que les élèves vérifiés.
-                            if row["Inscription 23-24 VÉRIFIÉE"] == "oui" and row["Saison 2023-2024"] == "Oui":
+                            if row[col_verif] == "oui" and row[col_saison] == "Oui":
                                 liste_eleves.append(eleve)
                             else:
-                                print(f"{eleve['Nom']} {eleve['Prénom']} a son inscription 2023/24 non vérifiée.")
+                                print(
+                                    f"{eleve['Nom']} {eleve['Prénom']} a son inscription {annee_scolaire} non vérifiée.")
             # on trie la liste des élèves par prénoms
             liste_eleves.sort(key=lambda x: unidecode.unidecode(x["Prénom"]))
             # on ajoute la liste des élèves à l'instance de la classe CoursDanse
             cours.liste_eleves = liste_eleves
             # on ajoute le nb d'élèves à l'instance de la classe CoursDanse
             cours.nb_eleves = len(cours.liste_eleves)
-
-
-    def add_value(list, key, eleve):
-        list.append(eleve.get(key))
-
 
     for niveau in liste_niveaux:
         for cours in niveau.liste_cours:
@@ -247,7 +253,5 @@ def fill_planning():
 
     for jour in var_semaine:
         jour.sort(reverse=False, key=lambda x: (x.heure, x.nom_cours))
-
     return var_semaine
 
-var_semaine = fill_planning()
